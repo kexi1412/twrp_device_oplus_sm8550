@@ -1,5 +1,7 @@
 # TWRP device tree for OPLUS SM8550 series
 
+[中文版本](README_CN.md)
+
 ## Supported devices
 
 ### OnePlus
@@ -17,13 +19,13 @@
 - realme GT5 150W (RMX3820 CN)
 - realme GT5 240W (RMX3823 CN)
 
-## Build it yourself?
+## Build it yourself
 
 ```shell
 mkdir twrp && cd twrp
 repo init --depth=1 -u https://github.com/TWRP-Test/platform_manifest_twrp_aosp.git -b twrp-16.0
 repo sync
-git clone --depth=1 https://github.com/kmiit/twrp_device_oplus_sm8550 device/oplus/sm8550
+git clone --depth=1 https://github.com/kexi1412/twrp_device_oplus_sm8550 device/oplus/sm8550
 ```
 
 ```shell
@@ -32,7 +34,11 @@ lunch twrp_sm8550
 make recoveryimage
 ```
 
-If there is no error, recovery.img will be found in `out/target/product/sm8550/recovery.img`
+If there are no errors, `recovery.img` will be generated at:
+
+```text
+out/target/product/sm8550/recovery.img
+```
 
 ## Features
 
@@ -49,7 +55,7 @@ Works:
 - [X] USB OTG
 - [X] Vibrator
 
-## To use it:
+## Flashing
 
 ```shell
 fastboot flash recovery recovery.img
