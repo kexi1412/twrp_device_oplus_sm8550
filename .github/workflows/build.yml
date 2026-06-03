@@ -74,20 +74,11 @@ jobs:
     - name: Maximize build space
       uses: easimon/maximize-build-space@master
 
-    - name: Setup zram
-      run: |
-        sudo apt install linux-modules-extra-$(uname -r) zram-tools -y
-        sudo modprobe zram
-        sudo sed -i 's/^#PERCENT=50/PERCENT=90/' /etc/default/zramswap
-        sudo sed -i 's/^#PRIORITY=100/PRIORITY=1000/' /etc/default/zramswap
-        sudo systemctl restart zramswap
-        zramctl
-
     - name: Setup environment
       run: |
         export DEBIAN_FRONTEND=noninteractive
-        sudo apt update && sudo apt upgrade -y
-        sudo apt install repo -y
+        sudo apt-get update
+        sudo apt-get install --no-install-recommends repo -y
         git config --global user.name ${{ github.actor }}
         git config --global user.email ${{ github.actor }}@users.noreply.github.com
 
