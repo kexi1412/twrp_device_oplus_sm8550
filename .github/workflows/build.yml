@@ -35,6 +35,10 @@ on:
         description: "Build partition"
         required: true
         default: "recovery"
+      BUILD_JOBS:
+        description: "Build parallel jobs"
+        required: true
+        default: "2"
 
 jobs:
   build:
@@ -124,7 +128,6 @@ jobs:
     - name: Build TWRP
       run: |
         source build/envsetup.sh
-        export ALLOW_MISSING_DEPENDENCIES=true
         export CCACHE_DIR=.ccache
         export CCACHE_EXEC=$(command -v ccache)
         export CCACHE_MAXSIZE=5G
@@ -132,7 +135,7 @@ jobs:
         lunch twrp_${{ env.LUNCH_TARGET }}
         (while true; do echo `date +%T` "Building TWRP..."; free -h; sleep 10; done) &
         TIP_PID=$!
-        m ${{ github.event.inputs.BUILD_PARTITION }}image
+        m -j${{ github.event.inputs.BUILD_JOBS }} ${{ github.event.inputs.BUILD_PARTITION }}image
         mv out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_PARTITION }}.img out/target/product/${{ github.event.inputs.DEVICE_NAME }}/TWRP-3.7.1-16-${{ github.event.inputs.DEVICE_NAME }}-${{ env.BUILD_DATE }}.img
         kill $TIP_PID && exit 0
 

@@ -5,3 +5,6 @@
 #
 
 PRODUCT_MAKEFILES := $(LOCAL_DIR)/twrp_sm8550.mk
+
+COMMON_LUNCH_CHOICES := \
+    twrp_sm8550-eng

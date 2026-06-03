@@ -17,7 +17,6 @@
 # Building with minimal manifest
 DEVICE_PATH := device/oplus/sm8550
 
-ALLOW_MISSING_DEPENDENCIES                      := true
 BUILD_BROKEN_DUP_RULES                          := true
 BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES    := true
 
@@ -110,8 +109,8 @@ BOARD_FLASH_BLOCK_SIZE                  := 262144
 # Dynamic/Logical Partitions
 BOARD_SUPER_PARTITION_SIZE              := 9126805504
 BOARD_SUPER_PARTITION_GROUPS            := qti_dynamic_partitions
-BOARD_QTI_DYNAMIC_PARTITIONS_SIZE       := 16936005632
-BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := system system_ext product vendor vendor_dlkm odm
+BOARD_QTI_DYNAMIC_PARTITIONS_SIZE       := 9122611200
+BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := system system_ext product vendor vendor_dlkm system_dlkm odm
 BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST += my_bigball my_carrier my_company my_engineering my_heytap my_manifest my_preload my_product my_region my_stock
 
 BOARD_RECOVERYIMAGE_PARTITION_SIZE      := 104857600
