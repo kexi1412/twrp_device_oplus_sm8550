@@ -73,12 +73,22 @@ jobs:
 
     - name: Maximize build space
       uses: easimon/maximize-build-space@master
+      with:
+        root-reserve-mb: 8192
+        swap-size-mb: 1024
+        remove-dotnet: true
+        remove-android: true
+        remove-haskell: true
+        remove-codeql: true
+        remove-docker-images: true
 
     - name: Setup environment
       run: |
         export DEBIAN_FRONTEND=noninteractive
         sudo apt-get update
         sudo apt-get install --no-install-recommends repo -y
+        sudo apt-get clean
+        sudo rm -rf /var/lib/apt/lists/*
         git config --global user.name ${{ github.actor }}
         git config --global user.email ${{ github.actor }}@users.noreply.github.com
 
@@ -87,7 +97,7 @@ jobs:
         repo init -u ${{ github.event.inputs.TWRP_MANIFEST_URL }} -b ${{ github.event.inputs.TWRP_MANIFEST_BRANCH }} --depth=1
         (while true; do echo "Syncing source..."; sleep 60; done) &
         TIP_PID=$!
-        repo sync
+        repo sync -c --no-tags --no-clone-bundle --optimized-fetch --prune -j1
         kill $TIP_PID && exit 0
 
     - name: Setup device
@@ -113,7 +123,7 @@ jobs:
         source build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
         lunch twrp_${{ env.LUNCH_TARGET }}
-        (while true; do echo `date +%T` "Building TWRP..."; free -h; ps -eo pid,comm,%mem,%cpu --sort=-%mem | head -n 8; sleep 60; done) &
+        (while true; do echo `date +%T` "Building TWRP..."; free -h; df -h /; sleep 300; done) &
         TIP_PID=$!
         m -j${{ github.event.inputs.BUILD_JOBS }} ${{ github.event.inputs.BUILD_PARTITION }}image
         mv out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_PARTITION }}.img out/target/product/${{ github.event.inputs.DEVICE_NAME }}/TWRP-3.7.1-16-${{ github.event.inputs.DEVICE_NAME }}-${{ env.BUILD_DATE }}.img
