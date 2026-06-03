@@ -57,17 +57,6 @@ AB_OTA_PARTITIONS := \
     init_boot \
     system_dlkm
 
-# A/B related packages
-PRODUCT_PACKAGES += update_engine \
-    update_engine_client \
-    update_verifier \
-    android.hardware.boot@1.2-impl-qti \
-    android.hardware.boot@1.2-impl-qti.recovery \
-    android.hardware.boot@1.2-service
-
-PRODUCT_PACKAGES += \
-    update_engine_sideload
-
 # AB partitions for oplus
 AB_OTA_PARTITIONS += \
     my_bigball \
@@ -256,4 +245,3 @@ TARGET_RECOVERY_DEVICE_MODULES += strace
 RECOVERY_BINARY_SOURCE_FILES   += $(TARGET_OUT_EXECUTABLES)/strace
 
 # Soong namespaces
-PRODUCT_SOONG_NAMESPACES += $(DEVICE_PATH)
