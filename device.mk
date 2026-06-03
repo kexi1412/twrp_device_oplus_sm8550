@@ -62,10 +62,7 @@ AB_OTA_POSTINSTALL_CONFIG += \
     FILESYSTEM_TYPE_vendor=ext4 \
     POSTINSTALL_OPTIONAL_vendor=true
 
-# Set GRF/Vendor freeze properties
-BOARD_SHIPPING_API_LEVEL    := 35
-BOARD_API_LEVEL             := 35
-SHIPPING_API_LEVEL          := 35
+# Set shipping API level
 PRODUCT_SHIPPING_API_LEVEL  := 35
 
 # Support to compile recovery without msm headers
