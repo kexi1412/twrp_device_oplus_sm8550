@@ -128,6 +128,7 @@ jobs:
     - name: Build TWRP
       run: |
         source build/envsetup.sh
+        export ALLOW_MISSING_DEPENDENCIES=true
         export CCACHE_DIR=.ccache
         export CCACHE_EXEC=$(command -v ccache)
         export CCACHE_MAXSIZE=5G
