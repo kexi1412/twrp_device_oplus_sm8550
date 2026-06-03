@@ -17,9 +17,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/emulated_storage.mk)
 $(call inherit-product-if-exists, $(SRC_TARGET_DIR)/product/gsi_keys.mk)
 
 # Platform
-QCOM_BOARD_PLATFORMS += $(PRODUCT_PLATFORM)
-TARGET_BOARD_PLATFORM := $(PRODUCT_PLATFORM)
-TARGET_BOOTLOADER_BOARD_NAME := $(TARGET_BOARD_PLATFORM)
+PRODUCT_PLATFORM := kalama
 
 RELAX_USES_LIBRARY_CHECK := true
 

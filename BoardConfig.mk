@@ -15,6 +15,8 @@
 # limitations under the License.
 
 # Building with minimal manifest
+DEVICE_PATH := device/oplus/sm8550
+
 ALLOW_MISSING_DEPENDENCIES                      := true
 BUILD_BROKEN_DUP_RULES                          := true
 BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES    := true
@@ -71,7 +73,6 @@ AB_OTA_PARTITIONS += \
     my_stock
 
 # Bootloader
-PRODUCT_PLATFORM                := kalama
 TARGET_BOOTLOADER_BOARD_NAME    := kalama
 
 # Kernel/Ramdisk
@@ -144,7 +145,7 @@ TW_USE_DMCTL := true
 
 # Init
 TARGET_INIT_VENDOR_LIB          := //$(DEVICE_PATH):libinit_oplus_sm8550
-TARGET_RECOVERY_DEVICE_MODULES  := libinit_oplus_sm8550
+TARGET_RECOVERY_DEVICE_MODULES  += libinit_oplus_sm8550
 
 # AVB
 BOARD_AVB_ENABLE := true
