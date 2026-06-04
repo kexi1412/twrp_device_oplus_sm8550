@@ -74,10 +74,19 @@ jobs:
     - name: Maximize build space
       uses: easimon/maximize-build-space@master
 
+    - name: Setup environment
+      run: |
+        export DEBIAN_FRONTEND=noninteractive
+        sudo apt update
+        sudo apt install repo ccache -y
+        git config --global user.name ${{ github.actor }}
+        git config --global user.email ${{ github.actor }}@users.noreply.github.com
+
     - name: Setup ccache
       uses: hendrikmuhs/ccache-action@v1.2
       with:
         create-symlink: true
+        update-package-index: false
 
     - name: Setup zram
       run: |
@@ -87,14 +96,6 @@ jobs:
         sudo sed -i 's/^#PRIORITY=100/PRIORITY=1000/' /etc/default/zramswap
         sudo systemctl restart zramswap
         zramctl
-
-    - name: Setup environment
-      run: |
-        export DEBIAN_FRONTEND=noninteractive
-        sudo apt update
-        sudo apt install repo -y
-        git config --global user.name ${{ github.actor }}
-        git config --global user.email ${{ github.actor }}@users.noreply.github.com
 
     - name: Sync source
       run: |
