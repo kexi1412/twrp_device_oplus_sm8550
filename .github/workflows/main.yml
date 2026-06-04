@@ -103,6 +103,10 @@ jobs:
       run: |
         git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} device/${{ github.event.inputs.DEVICE_PATH }}
 
+    - name: Prune unused source trees
+      run: |
+        rm -rf cts test/suite_harness tools/tradefederation tools/loganalysis hardware/google/aemu system/secretkeeper packages/modules/AdServices
+
     - name: Generate build info
       run: |
         echo -e "$BUILD_INFO" >> INFO.txt
