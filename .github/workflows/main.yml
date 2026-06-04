@@ -71,16 +71,18 @@ jobs:
         echo BUILD_DATE=`date +%F` >> "$GITHUB_ENV"
         echo "REPO_NAME=$(basename ${{ github.event.inputs.TWRP_MANIFEST_URL }})" >> "$GITHUB_ENV"
 
-    - name: Maximize build space
-      uses: easimon/maximize-build-space@master
-
     - name: Setup environment
       run: |
         export DEBIAN_FRONTEND=noninteractive
-        sudo apt update
-        sudo apt install repo ccache -y
+        sudo apt-get update
+        sudo apt-get install -y repo ccache linux-modules-extra-$(uname -r) zram-tools
+        sudo apt-get clean
+        sudo rm -rf /var/lib/apt/lists/*
         git config --global user.name ${{ github.actor }}
         git config --global user.email ${{ github.actor }}@users.noreply.github.com
+
+    - name: Maximize build space
+      uses: easimon/maximize-build-space@master
 
     - name: Setup ccache
       uses: hendrikmuhs/ccache-action@v1.2
@@ -90,7 +92,6 @@ jobs:
 
     - name: Setup zram
       run: |
-        sudo apt install linux-modules-extra-$(uname -r) zram-tools -y
         sudo modprobe zram
         sudo sed -i 's/^#PERCENT=50/PERCENT=90/' /etc/default/zramswap
         sudo sed -i 's/^#PRIORITY=100/PRIORITY=1000/' /etc/default/zramswap
