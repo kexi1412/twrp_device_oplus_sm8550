@@ -74,6 +74,11 @@ jobs:
     - name: Maximize build space
       uses: easimon/maximize-build-space@master
 
+    - name: Setup ccache
+      uses: hendrikmuhs/ccache-action@v1.2
+      with:
+        create-symlink: true
+
     - name: Setup zram
       run: |
         sudo apt install linux-modules-extra-$(uname -r) zram-tools -y
@@ -125,6 +130,10 @@ jobs:
       run: |
         source build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
+        export CCACHE_DIR=.ccache
+        export CCACHE_EXEC=$(command -v ccache)
+        export CCACHE_MAXSIZE=5G
+        export USE_CCACHE=1
         lunch twrp_${{ env.LUNCH_TARGET }}
         (while true; do echo `date +%T` "Building TWRP..."; free -h; ps -eo pid,comm,%mem,%cpu --sort=-%mem | head -n 8; sleep 60; done) &
         TIP_PID=$!
