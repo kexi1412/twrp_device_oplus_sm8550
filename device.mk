@@ -52,9 +52,6 @@ AB_OTA_POSTINSTALL_CONFIG += \
 # Set shipping API level
 PRODUCT_SHIPPING_API_LEVEL  := 35
 
-# Support to compile recovery without msm headers
-TARGET_HAS_GENERIC_KERNEL_HEADERS := true
-
 # Dynamic partitions
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
@@ -76,13 +73,6 @@ $(call inherit-product, vendor/twrp/config/common.mk)
 PRODUCT_EXTRA_RECOVERY_KEYS += \
     $(DEVICE_PATH)/security/otacert
 
-# System AVB
-BOARD_AVB_VBMETA_SYSTEM := system
-BOARD_AVB_VBMETA_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
-BOARD_AVB_VBMETA_SYSTEM_ALGORITHM := SHA256_RSA2048
-BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
-BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX_LOCATION := 2
-
 # Enable Fuse Passthrough
 PRODUCT_PROPERTY_OVERRIDES += persist.sys.fuse.passthrough.enable=true
 
@@ -94,4 +84,6 @@ SOONG_CONFIG_NAMESPACES += ufsbsg
 SOONG_CONFIG_ufsbsg += ufsframework
 SOONG_CONFIG_ufsbsg_ufsframework := bsg
 
-TARGET_RECOVERY_DEVICE_DIRS += $(DEVICE_PATH)/twrp
+PRODUCT_COPY_FILES += \
+    $(DEVICE_PATH)/recovery/root/init.recovery.qcom.rc:$(TARGET_COPY_OUT_RECOVERY)/root/init.recovery.qcom.rc \
+    $(DEVICE_PATH)/recovery/root/init.recovery.usb.rc:$(TARGET_COPY_OUT_RECOVERY)/root/init.recovery.usb.rc

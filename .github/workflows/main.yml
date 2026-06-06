@@ -28,9 +28,9 @@ on:
         required: true
         default: "sm8550"
       LUNCH_TARGET:
-        description: "lunch twrp_ (default same as device name)"
+        description: "Full lunch target"
         required: false
-        default: ""
+        default: "twrp_sm8550-eng"
       BUILD_PARTITION:
         description: "Build partition"
         required: true
@@ -38,7 +38,7 @@ on:
       BUILD_JOBS:
         description: "Build parallel jobs"
         required: true
-        default: "1"
+        default: "2"
 
 jobs:
   build:
@@ -51,7 +51,7 @@ jobs:
         if [ -n "${{ github.event.inputs.LUNCH_TARGET }}" ]; then
           echo "LUNCH_TARGET=${{ github.event.inputs.LUNCH_TARGET }}" >> "$GITHUB_ENV"
         else
-          echo "LUNCH_TARGET=${{ github.event.inputs.DEVICE_NAME }}" >> "$GITHUB_ENV"
+          echo "LUNCH_TARGET=twrp_${{ github.event.inputs.DEVICE_NAME }}-eng" >> "$GITHUB_ENV"
         fi
         {
           echo 'BUILD_INFO<<EOF'
@@ -103,8 +103,8 @@ jobs:
         repo init -u ${{ github.event.inputs.TWRP_MANIFEST_URL }} -b ${{ github.event.inputs.TWRP_MANIFEST_BRANCH }} --depth=1
         (while true; do echo "Syncing source..."; sleep 60; done) &
         TIP_PID=$!
-        repo sync
-        kill $TIP_PID && exit 0
+        repo sync --current-branch --no-tags --no-clone-bundle --optimized-fetch -j2
+        kill $TIP_PID
 
     - name: Setup device
       run: |
@@ -138,12 +138,12 @@ jobs:
         export CCACHE_EXEC=$(command -v ccache)
         export CCACHE_MAXSIZE=2G
         export USE_CCACHE=1
-        lunch twrp_${{ env.LUNCH_TARGET }}
+        lunch ${{ env.LUNCH_TARGET }}
         (while true; do echo `date +%T` "Building TWRP..."; free -h; ps -eo pid,comm,%mem,%cpu --sort=-%mem | head -n 8; sleep 60; done) &
         TIP_PID=$!
         taskset -c 0-1 m -j${{ github.event.inputs.BUILD_JOBS }} ${{ github.event.inputs.BUILD_PARTITION }}image
         mv out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_PARTITION }}.img out/target/product/${{ github.event.inputs.DEVICE_NAME }}/TWRP-3.7.1-16-${{ github.event.inputs.DEVICE_NAME }}-${{ env.BUILD_DATE }}.img
-        kill $TIP_PID && exit 0
+        kill $TIP_PID
 
     - name: Upload to Release
       uses: softprops/action-gh-release@v2

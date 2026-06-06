@@ -30,7 +30,7 @@ git clone --depth=1 https://github.com/kexi1412/twrp_device_oplus_sm8550 device/
 
 ```shell
 source build/envsetup.sh
-lunch twrp_sm8550
+lunch twrp_sm8550-eng
 make recoveryimage
 ```
 

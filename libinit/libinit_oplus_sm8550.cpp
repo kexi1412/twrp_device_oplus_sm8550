@@ -13,6 +13,7 @@
 #include <unordered_map>
 
 using android::base::GetProperty;
+using android::base::ParseInt;
 using android::fs_mgr::GetKernelCmdline;
 
 const std::unordered_map<int, std::string> kRegionSuffixMap = {
@@ -59,6 +60,10 @@ const std::unordered_map<int, ModelInfo> kModelInfoMap = {
     {0,     {"OPLUS",   "SM8550",    "OPLUS",   "SM8550",  "SM8550",  "OPLUS_SM8550"}},
 };
 
+const std::unordered_map<int, ModelInfo> kOnePlus12RRegionMap = {
+    {27,  {"OnePlus", "OP5D35L1",  "OnePlus", "CPH2585", "CPH2585", "OnePlus_12R_IN"}},
+};
+
 /*
  * SetProperty does not allow updating read only properties and as a result
  * does not work for our use case. Write "OverrideProperty" to do practically
@@ -94,11 +99,16 @@ void SetupModelProperties(const ModelInfo& info, const std::string& region) {
     }
 }
 
+int ParsePropertyInt(const std::string& value, int fallback) {
+    int parsed;
+    return ParseInt(value, &parsed) ? parsed : fallback;
+}
+
 void vendor_load_properties() {
     std::string buf = "0";
     GetKernelCmdline("oplus_region", &buf);
 
-    auto region = std::stoi(buf);
+    auto region = ParsePropertyInt(buf, 0);
     auto region_suffix_iter = kRegionSuffixMap.find(region);
 
     // Handle unknown regions gracefully
@@ -107,14 +117,26 @@ void vendor_load_properties() {
         region_suffix_iter = kRegionSuffixMap.find(0);
     }
 
-    auto prjname = std::stoi(GetProperty("ro.boot.prjname", "0"));
-    auto model_info = kModelInfoMap.find(prjname);
+    auto prjname = ParsePropertyInt(GetProperty("ro.boot.prjname", "0"), 0);
+    const ModelInfo* model_info = nullptr;
 
-    // Handle unknown device models
-    if (model_info == kModelInfoMap.end()) {
-        LOG(ERROR) << "Unknown prjname: " << prjname << ", using default";
-        model_info = kModelInfoMap.find(0);
+    auto model_info_iter = kModelInfoMap.find(prjname);
+    if (model_info_iter != kModelInfoMap.end()) {
+        model_info = &model_info_iter->second;
     }
 
-    SetupModelProperties(model_info->second, region_suffix_iter->second);
+    if (prjname == 23861) {
+        auto region_model_info = kOnePlus12RRegionMap.find(region);
+        if (region_model_info != kOnePlus12RRegionMap.end()) {
+            model_info = &region_model_info->second;
+        }
+    }
+
+    // Handle unknown device models
+    if (model_info == nullptr) {
+        LOG(ERROR) << "Unknown prjname: " << prjname << ", using default";
+        model_info = &kModelInfoMap.find(0)->second;
+    }
+
+    SetupModelProperties(*model_info, prjname == 23861 ? "" : region_suffix_iter->second);
 }

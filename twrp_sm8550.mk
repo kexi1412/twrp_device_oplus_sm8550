@@ -13,6 +13,8 @@ $(call inherit-product, $(DEVICE_PATH)/device.mk)
 PRODUCT_DEVICE  := sm8550
 PRODUCT_NAME    := twrp_sm8550
 PRODUCT_BRAND   := oplus
+PRODUCT_MODEL   := OPLUS SM8550
+PRODUCT_MANUFACTURER := OPLUS
 
 # Theme
 TW_STATUS_ICONS_ALIGN   := center
