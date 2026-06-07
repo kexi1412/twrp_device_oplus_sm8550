@@ -38,11 +38,12 @@ on:
       BUILD_JOBS:
         description: "Build parallel jobs"
         required: true
-        default: "2"
+        default: "1"
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 360
     permissions:
       contents: write
     steps:
@@ -132,8 +133,8 @@ jobs:
       run: |
         source build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
-        export GOMAXPROCS=2
-        export SOONG_UI_NINJA_ARGS="-j${{ github.event.inputs.BUILD_JOBS }}"
+        export GOMAXPROCS=1
+        export SOONG_UI_NINJA_ARGS="-j${{ github.event.inputs.BUILD_JOBS }} -l1"
         export CCACHE_DIR=.ccache
         export CCACHE_EXEC=$(command -v ccache)
         export CCACHE_MAXSIZE=2G
@@ -141,9 +142,23 @@ jobs:
         lunch ${{ env.LUNCH_TARGET }}
         (while true; do echo `date +%T` "Building TWRP..."; free -h; ps -eo pid,comm,%mem,%cpu --sort=-%mem | head -n 8; sleep 60; done) &
         TIP_PID=$!
-        taskset -c 0-1 m -j${{ github.event.inputs.BUILD_JOBS }} ${{ github.event.inputs.BUILD_PARTITION }}image
+        m -j${{ github.event.inputs.BUILD_JOBS }} ${{ github.event.inputs.BUILD_PARTITION }}image
         mv out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_PARTITION }}.img out/target/product/${{ github.event.inputs.DEVICE_NAME }}/TWRP-3.7.1-16-${{ github.event.inputs.DEVICE_NAME }}-${{ env.BUILD_DATE }}.img
         kill $TIP_PID
+
+    - name: Upload build logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-logs-${{ github.run_id }}
+        if-no-files-found: ignore
+        path: |
+          out/error.log
+          out/verbose.log.gz
+          out/soong.log
+          out/build.log
+          out/target/product/${{ github.event.inputs.DEVICE_NAME }}/obj/NOTICE_FILES/src/NOTICE
+          device/${{ github.event.inputs.DEVICE_PATH }}/INFO.txt
 
     - name: Upload to Release
       uses: softprops/action-gh-release@v2
