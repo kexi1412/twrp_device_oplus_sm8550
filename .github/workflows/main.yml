@@ -30,7 +30,7 @@ on:
       LUNCH_TARGET:
         description: "Full lunch target"
         required: false
-        default: "twrp_sm8550-trunk_staging-eng"
+        default: "twrp_sm8550-aosp_current-eng"
       BUILD_PARTITION:
         description: "Build partition"
         required: true
@@ -51,7 +51,7 @@ jobs:
         if [ -n "${{ github.event.inputs.LUNCH_TARGET }}" ]; then
           echo "LUNCH_TARGET=${{ github.event.inputs.LUNCH_TARGET }}" >> "$GITHUB_ENV"
         else
-          echo "LUNCH_TARGET=twrp_${{ github.event.inputs.DEVICE_NAME }}-trunk_staging-eng" >> "$GITHUB_ENV"
+          echo "LUNCH_TARGET=twrp_${{ github.event.inputs.DEVICE_NAME }}-aosp_current-eng" >> "$GITHUB_ENV"
         fi
         {
           echo 'BUILD_INFO<<EOF'
