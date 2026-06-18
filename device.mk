@@ -59,6 +59,12 @@ PRODUCT_SHIPPING_API_LEVEL  := 33
 # Dynamic partitions
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
+# Do not build/assemble a super image. TWRP is a recovery and never packages
+# super.img; the device's real super is mounted at runtime via recovery.fstab.
+# Without this, Soong's auto-generated super image (soong_filesystem_creator)
+# rejects ColorOS's my_* partitions ("not a super image supported partition").
+PRODUCT_BUILD_SUPER_PARTITION := false
+
 # fastbootd
 PRODUCT_PACKAGES += fastbootd
 
