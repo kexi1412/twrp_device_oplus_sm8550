@@ -50,7 +50,11 @@ AB_OTA_POSTINSTALL_CONFIG += \
     POSTINSTALL_OPTIONAL_vendor=true
 
 # Set shipping API level
-PRODUCT_SHIPPING_API_LEVEL  := 35
+# Device launched on Android 13 (API 33). Declaring the true launch level keeps
+# the recovery from requiring any interface newer than an A13 device guarantees,
+# so it stays compatible across A13 / A14 / A15 firmware.
+BOARD_SHIPPING_API_LEVEL    := 33
+PRODUCT_SHIPPING_API_LEVEL  := 33
 
 # Dynamic partitions
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
